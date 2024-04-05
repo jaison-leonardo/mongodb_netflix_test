@@ -161,3 +161,14 @@ printjson(result.toArray());
 
 var result = detectDifferentIPsInUsers();
 printjson(result.toArray());
+
+// Obtener los IDs de los usuarios que tienen perfiles con IPs diferentes
+var usersWithDifferentIPs = detectDifferentIPsInUsers();
+
+// Iterar sobre los resultados y aplicar la función add_excedente_factura
+usersWithDifferentIPs.forEach(function(user) {
+    var userId = user.usuario._id;
+    add_excedente_factura(userId);
+});
+
+

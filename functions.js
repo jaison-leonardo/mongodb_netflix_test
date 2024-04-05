@@ -112,3 +112,31 @@ function detectDifferentIPsInUsers() {
     { $match: { different_ips: { $ne: [] } } },
   ]);
 }
+
+function detectRestrictedUsers() {
+  return db.usuarios.aggregate([
+    // Desenrollar los perfiles
+    { $unwind: '$perfiles' },
+    // Filtrar perfiles de niños
+    { $match: { 'perfiles.tipo_perfil': 'Niño' } },
+    // Proyectar solo los campos necesarios
+    {
+      $project: {
+        _id: '$_id',
+        nombres: '$nombres',
+        apellidos: '$apellidos',
+        numero_documento: '$numero_documento',
+        perfiles: '$perfiles',
+        restricciones: {
+          $filter: {
+            input: restricciones,
+            as: 'restriccion',
+            cond: { $eq: ['$$restriccion.tipo_restriccion', 'Restricción de Edad - Contenido para Adultos'] },
+          },
+        },
+      },
+    },
+    // Filtrar usuarios con restricciones
+    { $match: { restricciones: { $ne: [] } } },
+  ]);
+}
