@@ -75,3 +75,47 @@ db.runCommand({
 });
 
 //Fin para  llamar la funcion para detectar que usuarios de la base de datos tienen perfiles con Niños
+
+//Inicio para insertar contenido a todos los perfiles de los usuarios y eliminar algun historial de reproducciones
+
+var usuarios = db.usuarios.find();
+
+usuarios.forEach(function (usuario) {
+  var historiales = [
+    {
+      contenido_multimedia: 'ID_CONTENIDO_1',
+      tiempo_reproduccion: 120,
+      calificacion_usuario: 0,
+    },
+    {
+      contenido_multimedia: 'ID_CONTENIDO_2',
+      tiempo_reproduccion: 90,
+      calificacion_usuario: 5,
+    },
+    {
+      contenido_multimedia: 'ID_CONTENIDO_3',
+      tiempo_reproduccion: 30,
+      calificacion_usuario: 3.5,
+    },
+    {
+      contenido_multimedia: 'ID_CONTENIDO_4',
+      tiempo_reproduccion: 10,
+      calificacion_usuario: 1,
+    },
+    {
+      contenido_multimedia: 'ID_CONTENIDO_5',
+      tiempo_reproduccion: 120,
+      calificacion_usuario: 3,
+    },
+  ];
+
+  historiales.forEach(function (historial) {
+    db.usuarios.updateOne({ _id: usuario._id }, { $push: { 'perfiles.$[].historial_reproducciones': historial } });
+  });
+});
+
+var id_usuario = 'USUARIO_2';
+
+db.usuarios.updateOne({ _id: id_usuario }, { $unset: { 'perfiles.$[].historial_reproducciones': '' } });
+
+//Fin para insertar contenido a todos los perfiles de los usuarios y eliminar algun historial de reproducciones
